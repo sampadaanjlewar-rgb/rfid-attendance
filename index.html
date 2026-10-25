@@ -1,3 +1,4 @@
+HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -61,14 +62,14 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // Reference to the attendance node in Firebase
-    const dbRef = ref(db, 'attendance');
+    // Reference to the root database where card UIDs are stored[cite: 2]
+    const dbRef = ref(db, '');
 
     onValue(dbRef, (snapshot) => {
       const data = snapshot.val();
       const tbody = document.getElementById('attendance-body');
       
-      console.log("Data received from Firebase:", data); // Check your browser console (F12) to see this!
+      console.log("Data received from Firebase:", data);
 
       if (!data) {
         tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#94a3b8;">No attendance records found in database yet.</td></tr>`;
@@ -77,11 +78,11 @@
 
       let tableHtml = '';
       
-      // Loop through each child node inside 'attendance'
+      // Loop through each card node at the root level[cite: 2]
       for (let key in data) {
         let student = data[key];
         
-        // Ensure student object exists and has required fields
+        // Ensure student object exists and contains a name
         if (student && student.name) {
           let isPresent = student.status === "PRESENT";
           let badgeClass = isPresent ? "badge-present" : "badge-absent";
