@@ -7,7 +7,7 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     body { background-color: #0f172a; color: #f8fafc; padding: 20px; display: flex; justify-content: center; }
-    .container { width: 100%; max-width: 800px; }
+    .container { width: 100%; max-width: 900px; }
     .header { text-align: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px solid #334155; }
     .header h1 { color: #38bdf8; font-size: 26px; margin-bottom: 5px; }
     .header p { color: #94a3b8; font-size: 14px; }
@@ -37,10 +37,11 @@
             <th>Student Name</th>
             <th>Card UID</th>
             <th>Status</th>
+            <th>Last Log Time</th>
           </tr>
         </thead>
         <tbody id="attendance-body">
-          <tr><td colspan="3" style="text-align:center; color:#94a3b8;">Connecting to Firebase database...</td></tr>
+          <tr><td colspan="4" style="text-align:center; color:#94a3b8;">Connecting to database...</td></tr>
         </tbody>
       </table>
     </div>
@@ -51,38 +52,36 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-    // --- PASTE YOUR FIREBASE DATABASE URL BELOW ---
     const firebaseConfig = {
-      databaseURL: "https://rfid-attendance-system-f37d4-default-rtdb.firebaseio.com/" 
+      databaseURL: "https://rfid-attendance-system-f37d4-default-rtdb.firebaseio.com/" // Keep your Firebase URL here!
     };
 
-    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // Listen to changes in the database in real-time
     const dbRef = ref(db, 'attendance/');
     onValue(dbRef, (snapshot) => {
       const data = snapshot.val();
       const tbody = document.getElementById('attendance-body');
       
       if (!data) {
-        tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#94a3b8;">No attendance records found yet. Tap a card!</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#94a3b8;">No attendance records found yet. Tap a card!</td></tr>`;
         return;
       }
 
       let tableHtml = '';
-      // Loop through data received from Firebase
       for (let uid in data) {
         let student = data[uid];
         let isPresent = student.status === "PRESENT";
         let badgeClass = isPresent ? "badge-present" : "badge-absent";
+        let timeDisplay = student.timestamp ? student.timestamp : "--:--";
 
         tableHtml += `
           <tr>
             <td style="font-weight:600;">${student.name}</td>
             <td style="font-family:monospace; color:#94a3b8;">${student.uid}</td>
             <td><span class="badge ${badgeClass}">${student.status}</span></td>
+            <td style="color:#94a3b8;">${timeDisplay}</td>
           </tr>`;
       }
       tbody.innerHTML = tableHtml;
