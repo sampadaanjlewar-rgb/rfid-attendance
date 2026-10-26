@@ -137,6 +137,7 @@
       if (tabName === 'attendance') {
         document.querySelector('.nav-tabs button:nth-child(1)').classList.add('active');
         document.getElementById('attendance-section').classList.add('active');
+        fetchAttendance();
       } else {
         document.querySelector('.nav-tabs button:nth-child(2)').classList.add('active');
         document.getElementById('admin-section').classList.add('active');
@@ -162,7 +163,7 @@
           if (student && student.name) {
             let isPresent = student.status === "PRESENT" || student.status === "CHECK_IN";
             let badgeClass = isPresent ? "badge-present" : "badge-absent";
-            let statusText = isPresent ? "PRESENT" : "ABSENT";
+            let statusText = isPresent ? "CHECK_IN" : "CHECK_OUT";
 
             tableHtml += `
               <tr>
@@ -217,7 +218,7 @@
         return;
       }
 
-      let firebaseKey = uid.replace(/ /g, "_");
+      let firebaseKey = uid.replace(/\s+/g, "_");
       let studentData = { name: name, uid: uid };
 
       try {
