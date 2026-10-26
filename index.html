@@ -88,8 +88,9 @@
       </div>
     </div>
 
-    <!-- TAB 2: ADMIN PANEL -->
+    <!-- TAB 2: ADMIN PANEL (ADD / REMOVE STUDENTS) -->
     <div id="admin-section" class="section-content">
+      <!-- Add Student Form -->
       <div class="card">
         <div class="card-header">Register New Student</div>
         <div class="form-container">
@@ -105,6 +106,7 @@
         </div>
       </div>
 
+      <!-- Registered Students List (With Delete Option) -->
       <div class="card">
         <div class="card-header">Registered Students Database</div>
         <table>
@@ -121,11 +123,12 @@
         </table>
       </div>
     </div>
+
   </div>
 
   <script>
-    // Base Firebase URL (No trailing slash)
-    const DATABASE_URL = "https://rfid-attendance-system-f37d4-default-rtdb.firebaseio.com";
+    // --- YOUR FIREBASE DATABASE URL ---
+    const DATABASE_URL = "https://rfid-attendance-system-f37d4-default-rtdb.firebaseio.com/";
 
     function switchTab(tabName) {
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -144,7 +147,7 @@
 
     async function fetchAttendance() {
       try {
-        const response = await fetch(DATABASE_URL + "/attendance.json");
+        const response = await fetch(DATABASE_URL + "attendance.json");
         const data = await response.json();
         const tbody = document.getElementById('attendance-body');
         document.getElementById('last-updated').innerText = "Last synced: " + new Date().toLocaleTimeString();
@@ -179,7 +182,7 @@
 
     async function fetchRegisteredStudents() {
       try {
-        const response = await fetch(DATABASE_URL + "/registered_students.json");
+        const response = await fetch(DATABASE_URL + "registered_students.json");
         const data = await response.json();
         const tbody = document.getElementById('registered-body');
 
@@ -219,7 +222,7 @@
       let studentData = { name: name, uid: uid };
 
       try {
-        let response = await fetch(DATABASE_URL + "/registered_students/" + firebaseKey + ".json", {
+        let response = await fetch(DATABASE_URL + "registered_students/" + firebaseKey + ".json", {
           method: 'PUT',
           body: JSON.stringify(studentData),
           headers: { 'Content-Type': 'application/json' }
@@ -242,7 +245,7 @@
       if (!confirm("Are you sure you want to remove this student?")) return;
 
       try {
-        let response = await fetch(DATABASE_URL + "/registered_students/" + firebaseKey + ".json", {
+        let response = await fetch(DATABASE_URL + "registered_students/" + firebaseKey + ".json", {
           method: 'DELETE'
         });
 
@@ -258,7 +261,7 @@
     }
 
     fetchAttendance();
-    setInterval(fetchAttendance, 1000);
+    setInterval(fetchAttendance, 3000);
   </script>
 </body>
 </html>
